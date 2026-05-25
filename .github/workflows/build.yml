@@ -25,6 +25,12 @@ jobs:
           echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
           echo "Flutter project found at: $PROJECT_DIR"
 
+      - name: Fix dependency conflict
+        run: |
+          cd "$PROJECT_DIR"
+          sed -i 's/path: \^1.9.0/path: 1.8.3/g' pubspec.yaml
+          cat pubspec.yaml
+
       - name: Flutter pub get
         run: |
           cd "$PROJECT_DIR"
