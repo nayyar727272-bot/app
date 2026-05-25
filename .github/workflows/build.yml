@@ -15,11 +15,27 @@ jobs:
         with:
           channel: stable
 
-      - run: flutter pub get
+      - name: Unzip project
+        run: |
+          unzip -q remote_monitor_full.zip -d extracted_project
 
-      - run: flutter build apk
+      - name: Find Flutter project
+        run: |
+          PROJECT_DIR=$(dirname "$(find extracted_project -name pubspec.yaml | head -n 1)")
+          echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
+          echo "Flutter project found at: $PROJECT_DIR"
+
+      - name: Flutter pub get
+        run: |
+          cd "$PROJECT_DIR"
+          flutter pub get
+
+      - name: Build APK
+        run: |
+          cd "$PROJECT_DIR"
+          flutter build apk
 
       - uses: actions/upload-artifact@v4
         with:
           name: app-release
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: ${{ env.PROJECT_DIR }}/build/app/outputs/flutter-apk/app-release.apk
